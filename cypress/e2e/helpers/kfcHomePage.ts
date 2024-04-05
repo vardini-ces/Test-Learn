@@ -1,77 +1,42 @@
-class kfcHomePage{
-  
-    locators:{
-        setLocationText: string;
-        setLocationButton: string;
-        menuItemPeriPeri: string;
-        menuItemValueSnackers: string;
-        menuItemChickenRolls: string;
-        locationText: string;
-    };
-    url: string;
+class kfcHomePage {
+  locators = {
+    setLocationValueText: 'div[class="setLocationText"]',
+    setLocationValueButton: 'button[data-testid="set-location-button"]',
+    tilelist: '[class="menu-cards"]',
+  };
 
-    constructor(){
-    this.locators = {
-        setLocationText: 'div[class="setLocationText"]',
-        setLocationButton: 'button[data-testid="set-location-button"]',
-        menuItemPeriPeri: '[data-testid="tiles-click-PERI PERI CHICKEN"]',
-        menuItemValueSnackers: '[data-testid="tiles-click-VALUE SNACKERS"]',
-        menuItemChickenRolls: '[data-testid="tiles-click-CHICKEN ROLLS"]',
-        locationText: 'Allow location access for local store menu and promos',
-    };
-    this.url= '/';
-    }
+  url = "/";
 
-    visit() {
+  visit(): void {
+    cy.visit(this.url);
+  }
 
-        cy.visit(this.url);
-    }
+  verifyLocationText(locationverificationText: string): void {
+    cy.get(this.locators.setLocationValueText).should(
+      "have.text",
+      locationverificationText
+    );
+  }
 
-    verifyLocationText() {
-        
-        cy
-        .get(this.locators.setLocationText)
-        .should('have.text',this.locators.locationText);
+  verifyLocationButton(): void {
+    cy.get(this.locators.setLocationValueButton)
+      .should("be.visible")
+      .should("be.enabled");
+  }
 
-    }
+  verifyTileisValidLink(tile: string): void {
+    const hrefvalue = 'a[href="/menu/' + tile + '"]';
 
-    verifyLocationButton() {
+    cy.get(hrefvalue)
+      .should("exist")
+      .then((link) => {
+        const href: string = link.prop("href");
 
-        cy
-        .get(this.locators.setLocationButton)
-        .should('be.visible')
-        .should('be.enabled')
-        
-    }
-
-    verifyValueSnacker() {
-
-        cy
-        .get(this.locators.menuItemValueSnackers)
-        .should('have.attr', 'href')
-        .and('include', '/menu/value-snackers');
-
-    }
-
-    verifyPeriPeriTile() {
-
-        cy
-        .get(this.locators.menuItemPeriPeri)
-        .should('have.attr', 'href')
-        .and('include', '/menu/peri-peri-chicken');
-
-    }
-
-    verifyChickenRolls() {
-
-        cy
-        .get(this.locators.menuItemChickenRolls)
-        .should('have.attr', 'href')
-        .and('include', '/menu/chicken-rolls');
-
-    }
-
-
+        cy.request(href).then((response) => {
+          expect(response.status).to.eq(200);
+        });
+      });
+  }
 }
 
 export default kfcHomePage;

@@ -4,30 +4,38 @@ import KfcDealsPage from "../helpers/kfcDealsPage";
 const kfcHomePage = new KfcHomePage();
 const kfcDealsPage = new KfcDealsPage();
 
-describe('Verify the KFC Home, Menu and Login page', ()=> {
-   
+describe("Verify the KFC Home page location details and Deals page menu tiles", () => {
+  let UITextsJson: { startYourOrderText: string; locationText: string };
 
-    it('Verify the location text in home page', ()=> {
-        kfcHomePage.visit();
-        kfcHomePage.verifyLocationText();
-        kfcHomePage.verifyLocationButton();
-    })
+  before(() => {
+    cy.fixture("UITexts").then((UITexts) => {
+      UITextsJson = UITexts;
+    });
+  });
 
-    it('Verify the category tiles in home page', ()=> {
-        kfcHomePage.visit();
-        kfcHomePage.verifyPeriPeriTile();
-        kfcHomePage.verifyChickenRolls();
-        kfcHomePage.verifyValueSnacker();
+  it("Verify the location text and button in home page is displayed correcly", () => {
+    kfcHomePage.visit();
+    kfcHomePage.verifyLocationText(UITextsJson.locationText);
+    kfcHomePage.verifyLocationButton();
+  });
 
-    })
+  it("Verify the category menu tiles in Home page have valid links", () => {
+    const expectedTiles: string[] = [
+      "value-snackers",
+      "peri-peri-chicken",
+      "chicken-rolls",
+    ];
 
-    it('Verify the Kfc deals page', ()=> {
-        kfcDealsPage.visit();
-        kfcDealsPage.clickFindAKfc().verifyStartOrder();
+    kfcHomePage.visit();
+    expectedTiles.forEach((tile) => {
+      kfcHomePage.verifyTileisValidLink(tile);
+    });
+  });
 
-
-    })
-
-    
-
-})
+  it("Verify the Kfc deals page ", () => {
+    kfcDealsPage.visit();
+    kfcDealsPage
+      .clickFindAKfcButton()
+      .verifyStartOrderText(UITextsJson.startYourOrderText);
+  });
+});

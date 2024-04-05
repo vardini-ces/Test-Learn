@@ -1,45 +1,26 @@
-class kfcDealsPage{
+class kfcDealsPage {
+  locators = {
+    findAKfcButton: '[aria-label="Find a KFC"]',
+    startYourOrder: '[data-testid="contenttext-component"]',
+  };
 
-    locators:{
-        findAKfcButton: string;
-        startYourOrder:string;
-        startYourOrderText:string;
-    };
-    url:string
+  url = "/offers";
 
-    constructor(){
-        this.locators = {
-        findAKfcButton: '[aria-label="Find a KFC"]',
-        startYourOrder: '[data-testid="contenttext-component"]',
-        startYourOrderText: 'How would you like to receive your order?',
-        };
-        this.url='/offers';
-    }
+  visit(): void {
+    cy.visit(this.url);
+  }
 
+  clickFindAKfcButton(): this {
+    cy.get(this.locators.findAKfcButton).click();
 
-    visit() {
+    return this;
+  }
 
-        cy.visit(this.url);
-    }
+  verifyStartOrderText(startYourOrderText: string): this {
+    cy.get(this.locators.startYourOrder).contains(startYourOrderText);
 
-    clickFindAKfc(){
-
-        cy
-        .get(this.locators.findAKfcButton)
-        .click()
-
-        return this;
-    }
-
-    verifyStartOrder(){
-
-        cy
-        .get(this.locators.startYourOrder)
-        .contains(this.locators.startYourOrderText)
-
-        return this;
-    }
+    return this;
+  }
 }
 
 export default kfcDealsPage;
-
