@@ -3,6 +3,7 @@ class kfcHomePage {
     setLocationValueText: 'div[class="setLocationText"]',
     setLocationValueButton: 'button[data-testid="set-location-button"]',
     tilelist: '[class="menu-cards"]',
+    startOrderButton: '[aria-label="Start Order"]',
   };
 
   url = "/";
@@ -36,6 +37,10 @@ class kfcHomePage {
           expect(response.status).to.eq(200);
         });
       });
+  }
+
+  clickstartYourOrder(): void {
+    cy.get(this.locators.startOrderButton).click();
   }
 }
 
