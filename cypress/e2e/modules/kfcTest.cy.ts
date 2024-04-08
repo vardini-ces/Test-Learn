@@ -10,21 +10,23 @@ const menuPage = new MenuPage();
 const orderPage = new OrderPage();
 const cartPage = new CartPage();
 
-
 describe("Verify the KFC Home page location details and Deals page menu tiles", () => {
-  let UITextsJson: { startYourOrderText: string; locationText: string ; locationInputTextMumbai: string};
-  let itemDetailsJson: {id: string; name: string; price: number};
+  let UITextsJson: {
+    startYourOrderText: string;
+    locationText: string;
+    locationInputTextMumbai: string;
+    locationInputTextChennai: string;
+  };
+  // let itemDetailsJson: { id: string; name: string; price: number };
 
   before(() => {
     cy.fixture("UITexts").then((UITexts) => {
       UITextsJson = UITexts;
     });
 
-    cy.fixture("itemDetails").then((itemDetails) => {
-      itemDetailsJson = itemDetails;
-    });
-
-
+    // cy.fixture("itemDetails").then((itemDetails) => {
+    //   itemDetailsJson = itemDetails;
+    // });
   });
 
   it("Verify the location text and button in home page is displayed correcly", () => {
@@ -54,29 +56,55 @@ describe("Verify the KFC Home page location details and Deals page menu tiles", 
   });
 
   it("Select location and delivery time ", () => {
+    kfcHomePage.visit();
+    cy.clearLocalStorage();
+    cy.wait(3000);
     kfcHomePage.clickstartYourOrder();
-    orderPage.clickDeliveryButton().inputLocationDetails(UITextsJson.locationInputTextMumbai).clickConfirmDeliveryLocationButton();
+    orderPage
+      .clickDeliveryButton()
+      .inputLocationDetails(UITextsJson.locationInputTextChennai);
+    cy.wait(3000);
+    orderPage.clickConfirmDeliveryLocationButton();
     orderPage.selectDeliveryTime().confirmOrder();
   });
 
-it("Add items to cart", () => {
-  const itemsToAdd: string[] = [itemDetailsJson.id];
+  it("Edit the location to a different Location", () => {
+    kfcHomePage.visit();
+    cy.clearLocalStorage();
+    cy.wait(3000);
+    kfcHomePage.clickstartYourOrder();
+    orderPage
+      .clickDeliveryButton()
+      .inputLocationDetails(UITextsJson.locationInputTextChennai);
+    cy.wait(3000);
+    orderPage.clickConfirmDeliveryLocationButton();
+    orderPage.selectDeliveryTime().confirmOrder();
+    cy.wait(2000);
 
-  itemsToAdd.forEach(item => {
-  menuPage.addToCartItem(item);
-})
+    menuPage.changeLocation();
+    orderPage.inputLocationDetails(UITextsJson.locationInputTextMumbai);
+    orderPage.clickConfirmDeliveryLocationButton();
+  });
 
-it("Verify total value in cart", () => {
-  const itemsPrices: number[] = [itemDetailsJson.price];
+  it("Add items to cart and verify total value in cart", () => {
+    kfcHomePage.visit();
+    cy.clearLocalStorage();
+    cy.wait(3000);
+    kfcHomePage.clickstartYourOrder();
+    orderPage
+      .clickDeliveryButton()
+      .inputLocationDetails(UITextsJson.locationInputTextMumbai);
+    cy.wait(3000);
+    orderPage.clickConfirmDeliveryLocationButton();
+    orderPage.selectDeliveryTime().confirmOrder();
 
-cartPage.visit()
-cartPage.verifyTotalAmount(itemsPrices);
+    const itemsToAdd: string[] = ["L-404135", "L-404068"];
 
-})
-
-})
-
-
-
-
+    itemsToAdd.forEach((item) => {
+      menuPage.addToCartItem(item);
+    });
+    const itemsPrices: number[] = [448.57, 500.34];
+    cartPage.visit();
+    cartPage.verifyTotalAmount(itemsPrices);
+  });
 });

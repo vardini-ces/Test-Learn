@@ -7,6 +7,7 @@ class orderPage {
     dineInButton:
       '[data-testid="disposition-order-click-handler-Disposition - Dine in"]',
     searchLocationTextField: '[data-testid="store-search-input"]',
+    useThisAddress: '[data-testid="use-this-address"]',
     confirmDeliveryLocationButton: '[data-testid="btn-confirm"]',
     confirmScheduleButton: '[data-testid="confirm-button-handler"]',
     editLocationInScheduleOrder: '[data-testid="edit-location-test"]',
@@ -34,9 +35,13 @@ class orderPage {
   }
 
   inputLocationDetails(location: string): this {
-    cy.get(this.locators.searchLocationTextField)
-      .type(location)
-      .type("{enter}");
+    cy.get(this.locators.searchLocationTextField).clear();
+    cy.wait(3000);
+    cy.get(this.locators.searchLocationTextField).type(location);
+    cy.wait(7000);
+    cy.get(this.locators.searchLocationTextField).type("{enter}");
+
+    // cy.get(this.locators.useThisAddress).click();
 
     return this;
   }
@@ -67,7 +72,7 @@ class orderPage {
   }
 
   confirmOrder(): this {
-    cy.get(this.locators.confirmDeliveryLocationButton).click();
+    cy.get(this.locators.confirmScheduleButton).click();
 
     return this;
   }
